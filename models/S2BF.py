@@ -240,4 +240,5 @@ class feedforward(nn.Module):
         x = window_reverse(attn_windows, self.window_size, H, W, h_w, w_w)
         x = shortcut + self.drop_path(self.gamma1 * x)
         x = x + self.drop_path(self.gamma2 * self.mlp(self.norm(x)))
+
         return x
