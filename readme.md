@@ -2,7 +2,7 @@
 
 This repository contains the official PyTorch implementation of **S2BF** (Saliency-Selective Bidirectional Fusion for Facial Expression Recognition).The remaining parts of the codebase will be publicly released upon acceptance of this paper.
 
-We evaluate S2BF on **RAF-DB, AffectNet (7/8 classes), FERPlus, and CAER-S**, achieving state-of-the-art or highly competitive results with favorable efficiency.
+We evaluate S2BF on **RAF-DB, AffectNet (7/8 classes), FERPlus, and CAER-S**.
 
 ## Project Structure
 
