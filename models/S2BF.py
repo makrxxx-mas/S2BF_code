@@ -138,7 +138,7 @@ class ClassificationHead_TEST(nn.Module):
     def __init__(self, input_dim: int = 512, target_dim: int = 256, hidden_dim: int = 128):
         super().__init__()
         self.head = nn.Sequential(
-            nn.LayerNorm(input_dim),  # 稍微稳定输入
+            nn.LayerNorm(input_dim),  
             nn.Linear(input_dim, hidden_dim),
             nn.ReLU(),
             nn.Linear(hidden_dim, target_dim)

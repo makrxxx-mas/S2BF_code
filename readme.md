@@ -6,12 +6,14 @@ We evaluate S2BF on **RAF-DB, AffectNet (7/8 classes), FERPlus, and CAER-S**, ac
 
 ## Project Structure
 
+
 A typical layout is:
 
+```text
 S2BF/
 ├── train.py
 ├── models/
-│   ├── S2BF.py           # main S2BF model (S2BF class, SSCF, IGSRA, etc.)
+│   ├── S2BF.py      # main S2BF model (S2BF class, SSCF, IGSRA, etc.)
 │   └── ...
 ├── data_preprocessing/
 │   ├── dataset_raf.py
@@ -25,7 +27,8 @@ S2BF/
 │   └── CAER-S/
 ├── utils.py
 └── checkpoint/
-    └── ...               # saved models
+    └── ...          # saved models
+
 
 You can adjust the structure description here to match your actual repo.
 

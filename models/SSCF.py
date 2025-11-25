@@ -11,8 +11,7 @@ from timm.models.layers import trunc_normal_
 
 
 class Mlp(nn.Module):
-    """ MLP as used in Vision Transformer, MLP-Mixer and related networks
-    """
+
     def __init__(self, in_features, hidden_features=None, out_features=None, act_layer=nn.GELU, drop=0.):
         super().__init__()
         out_features = out_features or in_features
@@ -34,13 +33,7 @@ class Mlp(nn.Module):
 
 
 def drop_path(x, drop_prob: float = 0., training: bool = False):
-    """Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
-    This is the same as the DropConnect impl I created for EfficientNet, etc networks, however,
-    the original name is misleading as 'Drop Connect' is a different form of dropout in a separate paper...
-    See discussion: https://github.com/tensorflow/tpu/issues/494#issuecomment-532968956 ... I've opted for
-    changing the layer and argument names to 'drop path' rather than mix DropConnect as a layer name and use
-    'survival rate' as the argument.
-    """
+
     if drop_prob == 0. or not training:
         return x
     keep_prob = 1 - drop_prob
@@ -148,50 +141,6 @@ class LayerNorm(nn.Module):
             x = self.weight[:, None, None] * x + self.bias[:, None, None]
             return x
 
-class ConvMLP(nn.Module):
-    def __init__(self, in_dim, out_dim, mlp_ratio=4):
-        super(ConvMLP, self).__init__()
-
-        # 第一层卷积
-        self.conv1 = nn.Conv1d(in_dim, in_dim * mlp_ratio, kernel_size=3, padding=1)
-        # self.norm1 = LayerNorm(in_dim * mlp_ratio, eps=1e-6, data_format="channels_first")
-        # self.norm1 = nn.LayerNorm(in_dim * mlp_ratio)
-        self.act1 = nn.GELU()
-
-        # MLP的卷积处理
-        self.fc1 = nn.Conv1d(in_dim * mlp_ratio, in_dim * mlp_ratio, kernel_size=1)
-        # self.norm2 = LayerNorm(in_dim * mlp_ratio, eps=1e-6, data_format="channels_first")
-        # self.norm2 = nn.LayerNorm(in_dim * mlp_ratio)
-        self.act2 = nn.GELU()
-
-        # 第二层卷积
-        self.conv2 = nn.Conv1d(in_dim * mlp_ratio, out_dim, kernel_size=3, padding=1)
-        # self.norm3 = LayerNorm(out_dim, eps=1e-6, data_format="channels_first")
-        # self.norm3 = nn.LayerNorm(in_dim * mlp_ratio)
-
-        self.apply(self._init_weights)
-
-    def _init_weights(self, m):
-        if isinstance(m, (nn.Conv2d, nn.Linear)):
-            trunc_normal_(m.weight, std=.02)
-            if m.bias is not None:
-                nn.init.constant_(m.bias, 0)
-
-        elif isinstance(m, (LayerNorm, nn.LayerNorm)):
-            nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
-
-    def forward(self, x):
-        # 第一步卷积+激活
-        # x = self.norm1(self.act1(self.conv1(x)))
-        x = self.act1(self.conv1(x))
-        # 通过MLP卷积进行特征学习
-        # x = self.norm2(self.act2(self.fc1(x)))
-        x = self.act2(self.fc1(x))
-        # 第二步卷积
-        # x = self.norm3(self.conv2(x))
-        x = self.conv2(x)
-        return x
 
 
 
@@ -328,7 +277,7 @@ class Block_S3CT(nn.Module):
         self.norm4 = norm_layer(dim)
 
         self.conv = nn.Conv1d(self.num_channels, self.num_channels, 1)
-        # self.conv = ConvMLP(self.num_channels,self.num_channels,2)
+
 
     def forward(self, x):
         x_img = x[:,:self.img_chanel, :]
@@ -339,10 +288,10 @@ class Block_S3CT(nn.Module):
 
         x_lm = self.attn_lm(x)
         x_lm = x_lm + self.norm4(self.mlp2(x_lm))
-        ##  default ##
+
         x = torch.cat((x_img, x_lm), dim=1)
         x = self.conv(x)
-        ###
+
         return x
 
 
